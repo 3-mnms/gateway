@@ -19,8 +19,6 @@ spring:
           uri: http://localhost:10003
           predicates:
             - Path=/api/**
-          filters:
-            - StripPrefix=1
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
