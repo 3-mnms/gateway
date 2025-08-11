@@ -1,0 +1,46 @@
+server:
+  port: 10000
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        namespaces:
+          - booking
+          - festival
+          - payment
+          - user
+    gateway:
+      routes:
+        - id: local-service
+          uri: http://localhost:10003
+          predicates:
+            - Path=/api/**
+          filters:
+            - StripPrefix=1
+jwt:
+  private-pem-path: classpath:keys/private.pem
+  public-pem-path: classpath:keys/public.pem
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    health:
+      show-details: always
+  endpoint:
+    gateway:
+      access: unrestricted
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.discovery: DEBUG
+    org.springframework.cloud.kubernetes.discovery: DEBUG
+    reactor.netty.http.client.HttpClient: DEBUG
