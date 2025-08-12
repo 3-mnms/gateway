@@ -32,11 +32,15 @@ public class JwtToHeaderFilter implements GlobalFilter, Ordered {
                     String jwt = auth.getToken().getTokenValue();
                     Claims claims = jwtTokenProvider.getAllClaims(jwt);
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                            .header("X-Login-Id",  jwtTokenProvider.getSubject(claims))
                             .header("X-User-Id",  jwtTokenProvider.getClaimAsString(claims, "userId"))
                             .header("X-User-Name", jwtTokenProvider.getClaimAsString(claims,"name"))
                             .header("X-User-Role", jwtTokenProvider.getClaimAsString(claims,"role"))
                             .build();
-
+                    System.out.println("X-Login-Id" +   jwtTokenProvider.getSubject(claims));
+                    System.out.println("X-User-Id" +   jwtTokenProvider.getClaimAsString(claims, "userId"));
+                    System.out.println("X-User-Name" +  jwtTokenProvider.getClaimAsString(claims,"name"));
+                    System.out.println("X-User-Role" +  jwtTokenProvider.getClaimAsString(claims,"role"));
                     return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 })
                 .switchIfEmpty(Mono.defer(() -> {

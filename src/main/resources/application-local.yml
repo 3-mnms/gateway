@@ -18,7 +18,7 @@ spring:
         - id: local-service
           uri: http://localhost:10003
           predicates:
-            - Path=/api/**
+            - Path=/
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
