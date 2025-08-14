@@ -39,7 +39,7 @@ public class JwtSecurityContextRepository implements ServerSecurityContextReposi
         try {
             Claims claims = jwtTokenProvider.getAllClaims(token);
             String username = jwtTokenProvider.getName(claims);
-            String role = jwtTokenProvider.getRole(claims);
+            String role = jwtTokenProvider.getRole(claims);w
 
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
