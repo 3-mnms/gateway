@@ -16,38 +16,26 @@ spring:
         service-labels:
           expose-via-spring-gateway: "true"
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:5173"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
       default-filters:
         - StripPrefix=1
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-          predicates:
-            - name: Path
-              args:
-                pattern: "'/' + serviceId + '/**'"
-          filters:
-            - name: StripPrefix
-              args:
-                parts: 1
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              predicates:
+                - name: Path
+                  args:
+                    pattern: "'/' + serviceId + '/**'"
+              filters:
+                - name: StripPrefix
+                  args:
+                    parts: 1
 
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
-
-
 
 management:
   endpoints:
