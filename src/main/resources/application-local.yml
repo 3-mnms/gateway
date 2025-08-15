@@ -23,26 +23,28 @@ spring:
                 - Path=/user/**
               filters:
                 - StripPrefix=1
-                -
-            - id: booking-service
-              uri: http://localhost:8081
-              predicates:
-                - Path=/booking/**
-              filters:
-                - StripPrefix=1
-                -
-            - id: festival-service
-              uri: http://localhost:8082
-              predicates:
-                - Path=/festival/**
-              filters:
-                - StripPrefix=1
+
             - id: payment-service
-              uri: http://localhost:8083
+              uri: http://localhost:8081
               predicates:
                 - Path=/payment/**
               filters:
                 - StripPrefix=1
+
+            - id: booking-service
+              uri: http://localhost:8082
+              predicates:
+                - Path=/booking/**
+              filters:
+                - StripPrefix=1
+
+            - id: festival-service
+              uri: http://localhost:8083
+              predicates:
+                - Path=/festival/**
+              filters:
+                - StripPrefix=1
+
 
 jwt:
   private-pem-path: classpath:keys/private.pem
