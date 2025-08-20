@@ -5,6 +5,7 @@ spring:
   application:
     name: api-gateway
   cloud:
+    # Kubernetes 자동 Routing 설정 및 검색 범위 namespace 설정
     kubernetes:
       discovery:
         enabled: true
@@ -13,42 +14,41 @@ spring:
           - festival
           - payment
           - user
+        # 검색 조건 : service 가 이 라벨을 포함할 경우
         service-labels:
           expose-via-spring-gateway: "true"
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:5173"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
-      default-filters:
-        - StripPrefix=1
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-          predicates:
-            - name: Path
-              args:
-                pattern: "'/' + serviceId + '/**'"
-          filters:
-            - name: StripPrefix
-              args:
-                parts: 1
+      server:
+        webflux:
+          # Kubernetes Routing 을 위한 규칙 설정
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              # serviceID 를 기점으로 자동 라우팅
+              predicates:
+                - name: Path
+                  args:
+                    pattern: "'/' + serviceId + '/**'"
+              # 첫 uri 없이 전달
+              filters:
+                - name: StripPrefix
+                  args:
+                    parts: 1
 
+
+# JWT key 세팅
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
 
 
+# cors url 설정
+cors:
+  url: http://localhost:5173
 
+
+# actuator 노출 범위, 조건
 management:
   endpoints:
     web:
