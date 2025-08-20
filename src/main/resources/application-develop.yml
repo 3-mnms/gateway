@@ -66,3 +66,15 @@ logging:
     org.springframework.cloud.gateway.discovery: DEBUG
     org.springframework.cloud.kubernetes.discovery: DEBUG
     reactor.netty.http.client.HttpClient: DEBUG
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User
+        url: /api-user-service/v3/api-docs
+      - name: Payment
+        url: /api-payment-service/v3/api-docs
+      - name: Booking
+        url: /api-booking-service/v3/api-docs
+      - name: Festival
+        url: /api-festival-service/v3/api-docs
