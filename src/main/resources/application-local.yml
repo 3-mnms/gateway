@@ -10,22 +10,30 @@ spring:
         webflux:
           # 각 MSA 서비스 라우팅을 위한 설정. uri 가 어떻게 이루어져있는지 파악되지 않아서 predicates ** 처리
           routes:
-            - id: local-service1
+            - id: user
               uri: http://localhost:8080
               predicates:
-                - Path=/**
-            - id: local-service2
+                - Path=/user/**
+              filters:
+                - StripPrefix=1
+            - id: payment
               uri: http://localhost:8081
               predicates:
-                - Path=/**
-            - id: local-service3
+                - Path=/payment
+              filters:
+                - StripPrefix=1
+            - id: booking
               uri: http://localhost:8082
               predicates:
-                - Path=/**
-            - id: local-service4
+                - Path=/booking/**
+              filters:
+                - StripPrefix=1
+            - id: festival
               uri: http://localhost:8083
               predicates:
-                - Path=/**
+                - Path=/festival/**
+              filters:
+                - StripPrefix=1
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
@@ -53,3 +61,18 @@ logging:
     org.springframework.cloud.gateway.discovery: DEBUG
     org.springframework.cloud.kubernetes.discovery: DEBUG
     reactor.netty.http.client.HttpClient: DEBUG
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User
+        url: /user/v3/api-docs
+
+      - name: Payment
+        url: http://localhost:8081/api/v3/api-docs
+
+      - name: Booking
+        url: /booking/v3/api-docs
+
+      - name: Festival
+        url: http://localhost:8083/api/v3/api-docs

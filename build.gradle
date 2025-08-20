@@ -47,7 +47,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-json'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9'
 }
 dependencyManagement {
 	imports {
