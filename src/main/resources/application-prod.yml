@@ -1,8 +1,11 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: api-gateway
   cloud:
-    # Kubernetes 자동 Routing 설정을 위한 namespace 항목 설정
+    # Kubernetes 자동 Routing 설정 및 검색 범위 namespace 설정
     kubernetes:
       discovery:
         enabled: true
@@ -17,26 +20,66 @@ spring:
     gateway:
       server:
         webflux:
-          # Kubernetes Routing 을 위한 규칙 설정
-          discovery:
-            locator:
-              enabled: true
-              lower-case-service-id: true
-              # serviceID 를 기점으로 자동 라우팅
+          routes:
+            - id: user
+              uri: http://api-user-service:8080
               predicates:
-                - name: Path
-                  args:
-                    pattern: "'/' + serviceId + '/**'"
-              # 첫 uri 없이 전달
-              filters:
-                - name: StripPrefix
-                  args:
-                    parts: 1
+                - Path=/api/user/**
 
+            - id: user-swagger
+              uri: http://api-user-service:8080
+              predicates:
+                - Path=/api/user/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+
+            - id: payment
+              uri: http://api-payment-service:8080
+              predicates:
+                - Path=/api/payment/**
+
+            - id: payment-swagger
+              uri: http://api-payment-service:8080
+              predicates:
+                - Path=/api/payment/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+
+            - id: booking
+              uri: http://api-booking-service:8080
+              predicates:
+                - Path=/api/booking/**
+
+            - id: booking-swagger
+              uri: http://api-booking-service:8080
+              predicates:
+                - Path=/api/booking/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: festival
+              uri: http://api-festival-service:8080
+              predicates:
+                - Path=/api/festival/**
+
+            - id: festival-swagger
+              uri: http://api-festival-service:8080
+              predicates:
+                - Path=/api/festival/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+
+# JWT key 세팅
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
-
 
 
 # cors url 설정
@@ -44,9 +87,7 @@ cors:
   url: http://localhost:5173
 
 
-server:
-  port: 8080
-
+# actuator 노출 범위, 조건
 management:
   endpoints:
     web:
@@ -69,10 +110,13 @@ springdoc:
   swagger-ui:
     urls:
       - name: User
-        url: /api-user-service/v3/api-docs
+        url: /api/user/v3/api-docs
+
       - name: Payment
-        url: /api-payment-service/v3/api-docs
+        url: /api/payment/v3/api-docs
+
       - name: Booking
-        url: /api-booking-service/v3/api-docs
+        url: /api/booking/v3/api-docs
+
       - name: Festival
-        url: /api-festival-service/v3/api-docs
+        url: /api/festival/v3/api-docs
