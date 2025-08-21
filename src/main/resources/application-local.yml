@@ -13,27 +13,50 @@ spring:
             - id: user
               uri: http://localhost:8080
               predicates:
-                - Path=/user/**
+                - Path=/api/user/**
+            - id: user-swagger
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/user/v3/api-docs
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
+              order: -1
+
             - id: payment
               uri: http://localhost:8081
               predicates:
-                - Path=/payment
+                - Path=/api/payment/**
+            - id: payment-swagger
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/payment/v3/api-docs
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
+              order: -1
+
             - id: booking
               uri: http://localhost:8082
               predicates:
-                - Path=/booking/**
+                - Path=/api/booking/**
+            - id: booking-swagger
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/booking/v3/api-docs
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
+              order: -1
+
             - id: festival
               uri: http://localhost:8083
               predicates:
-                - Path=/festival/**
+                - Path=/api/festival/**
+            - id: festival-swagger
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/festival/v3/api-docs
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
+              order: -1
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
@@ -66,13 +89,13 @@ springdoc:
   swagger-ui:
     urls:
       - name: User
-        url: /user/v3/api-docs
+        url: /api/user/v3/api-docs
 
       - name: Payment
-        url: /payment/v3/api-docs
+        url: /api/payment/v3/api-docs
 
       - name: Booking
-        url: /booking/v3/api-docs
+        url: /api/booking/v3/api-docs
 
       - name: Festival
-        url: /festival/v3/api-docs
+        url: /api/festival/v3/api-docs
