@@ -13,7 +13,7 @@ spring:
             - id: user
               uri: http://localhost:8080
               predicates:
-                - Path=/api/user/**
+                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**
             - id: user-swagger
               uri: http://localhost:8080
               predicates:
@@ -37,7 +37,8 @@ spring:
             - id: booking
               uri: http://localhost:8082
               predicates:
-                - Path=/api/booking/**
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**
+
             - id: booking-swagger
               uri: http://localhost:8082
               predicates:
