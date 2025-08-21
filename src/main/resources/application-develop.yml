@@ -22,12 +22,12 @@ spring:
         webflux:
           routes:
             - id: user
-              uri: http://api-user-service:8080
+              uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
                 - Path=/api/user/**
 
             - id: user-swagger
-              uri: http://api-user-service:8080
+              uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
                 - Path=/api/user/v3/api-docs
               filters:
@@ -36,12 +36,12 @@ spring:
 
 
             - id: payment
-              uri: http://api-payment-service:8080
+              uri: http://api-payment-service.payment.svc.cluster.local:8080
               predicates:
                 - Path=/api/payment/**
 
             - id: payment-swagger
-              uri: http://api-payment-service:8080
+              uri: http://api-payment-service.payment.svc.cluster.local:8080
               predicates:
                 - Path=/api/payment/v3/api-docs
               filters:
@@ -50,12 +50,12 @@ spring:
 
 
             - id: booking
-              uri: http://api-booking-service:8080
+              uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
                 - Path=/api/booking/**
 
             - id: booking-swagger
-              uri: http://api-booking-service:8080
+              uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
                 - Path=/api/booking/v3/api-docs
               filters:
@@ -63,12 +63,12 @@ spring:
               order: -1
 
             - id: festival
-              uri: http://api-festival-service:8080
+              uri: http://api-festival-service.festival.svc.cluster.local:8080
               predicates:
                 - Path=/api/festival/**
 
             - id: festival-swagger
-              uri: http://api-festival-service:8080
+              uri: http://api-festival-service.festival.svc.cluster.local:8080
               predicates:
                 - Path=/api/festival/v3/api-docs
               filters:
