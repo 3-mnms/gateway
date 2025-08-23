@@ -32,11 +32,7 @@ jobs:
       - run: ./gradlew bootJar --no-daemon
 
       - name: ⏱️ Tag
-        run: |
-          TS=$(date -u +'%Y%m%d%H%M%S')
-          echo "TAG_AMD=v${TS}-win" >> $GITHUB_ENV
-          echo "TAG_ARM=v${TS}-mac" >> $GITHUB_ENV
-          echo "TAG=v${TS}-win" >> $GITHUB_ENV
+        run: echo "TAG=v$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - uses: docker/setup-buildx-action@v3
 
@@ -50,10 +46,10 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw,value=${{ env.TAG_AMD }}
-            type=raw,value=${{ env.TAG_ARM }}
+            type=raw,value=${{ env.TAG }}
             type=sha
-            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=v0.1
+            type=raw,value=latest
 
       - uses: docker/build-push-action@v5
         with:
