@@ -48,13 +48,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.TAG }}
             type=sha
-            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=v0.1
+            type=raw,value=latest
 
       - uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
