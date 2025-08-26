@@ -84,7 +84,11 @@ jwt:
 
 # cors url 설정
 cors:
-  url: http://localhost:5173
+  url:
+    - http://localhost:5173
+    - http://127.0.0.1:5173
+    - http://localhost:5174
+    - http://127.0.0.1:5174
 
 
 # actuator 노출 범위, 조건

@@ -13,7 +13,7 @@ spring:
             - id: user
               uri: http://localhost:8080
               predicates:
-                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**
+                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/mypage/**
             - id: user-swagger
               uri: http://localhost:8080
               predicates:
@@ -25,11 +25,11 @@ spring:
             - id: payment
               uri: http://localhost:8081
               predicates:
-                - Path=/api/payment/**
+                - Path=/api/payments/**
             - id: payment-swagger
               uri: http://localhost:8081
               predicates:
-                - Path=/api/payment/v3/api-docs
+                - Path=/api/payments/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
@@ -65,7 +65,11 @@ jwt:
 
 # cors url 설정
 cors:
-  url: http://localhost:5173
+  url:
+    - http://localhost:5173
+    - http://127.0.0.1:5173
+    - http://localhost:5174
+    - http://127.0.031:5174
 
 
 management:
