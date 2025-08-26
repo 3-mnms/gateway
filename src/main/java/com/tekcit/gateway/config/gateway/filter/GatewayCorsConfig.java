@@ -1,6 +1,9 @@
 package com.tekcit.gateway.config.gateway.filter;
 
+import com.tekcit.gateway.config.gateway.property.CorsProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -10,17 +13,17 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class GatewayCorsConfig {
 
 
-    @Value("${cors.url:http://localhost:5173}")
-    private List<String> corsUrl;
+    private final CorsProperties corsProperties;
 
 
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        for(String url : corsUrl){
+        for(String url : corsProperties.getUrl()){
 
             config.addAllowedOrigin(url);
         }
