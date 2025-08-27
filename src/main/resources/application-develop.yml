@@ -24,7 +24,7 @@ spring:
             - id: user
               uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
-                - Path=/api/user/**
+                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/mypage/**
 
             - id: user-swagger
               uri: http://api-user-service.user.svc.cluster.local:8080
@@ -38,7 +38,7 @@ spring:
             - id: payment
               uri: http://api-payment-service.payment.svc.cluster.local:8080
               predicates:
-                - Path=/api/payment/**
+                - Path=/api/payments/**,/api/tekcitpay/**
 
             - id: payment-swagger
               uri: http://api-payment-service.payment.svc.cluster.local:8080
@@ -52,7 +52,7 @@ spring:
             - id: booking
               uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
-                - Path=/api/booking/**
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**
 
             - id: booking-swagger
               uri: http://api-booking-service.booking.svc.cluster.local:8080

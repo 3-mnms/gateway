@@ -25,7 +25,7 @@ spring:
             - id: payment
               uri: http://localhost:8081
               predicates:
-                - Path=/api/payments/**
+                - Path=/api/payments/**,/api/tekcitpay/**
             - id: payment-swagger
               uri: http://localhost:8081
               predicates:
