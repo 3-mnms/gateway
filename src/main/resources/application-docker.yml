@@ -75,3 +75,20 @@ jwt:
   private-pem-path: ${JWT_PRIVATE_PEM_PATH:file:/etc/keys/private.pem}
   public-pem-path:  ${JWT_PUBLIC_PEM_PATH:file:/etc/keys/public.pem}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    health:
+      show-details: always
+  endpoint:
+    gateway:
+      access: unrestricted
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.discovery: DEBUG
+    org.springframework.cloud.kubernetes.discovery: DEBUG
+    reactor.netty.http.client.HttpClient: DEBUG
