@@ -63,6 +63,13 @@ springdoc:
       - { name: Booking,  url: /api/booking/v3/api-docs }
       - { name: Festival, url: /api/festival/v3/api-docs }
 
+cors:
+  url:
+    - http://localhost:5173
+    - http://127.0.0.1:5173
+    - http://localhost:5174
+    - http://127.0.0.1:5174
+
 
 jwt:
   private-pem-path: ${JWT_PRIVATE_PEM_PATH:file:/etc/keys/private.pem}
