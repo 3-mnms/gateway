@@ -36,7 +36,7 @@ spring:
             - id: booking
               uri: http://localhost:8082
               predicates:
-                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
 
             - id: booking-swagger
               uri: http://localhost:8082

@@ -52,7 +52,7 @@ spring:
             - id: booking
               uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
-                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
 
             - id: booking-swagger
               uri: http://api-booking-service.booking.svc.cluster.local:8080
