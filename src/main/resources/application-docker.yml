@@ -1,0 +1,70 @@
+server:
+  port: 10000
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user
+              uri: http://user:8080
+              predicates:
+                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/mypage/**
+            - id: user-swagger
+              uri: http://user:8080
+              predicates:
+                - Path=/api/user/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: payment
+              uri: http://payment:8081
+              predicates:
+                - Path=/api/payments/**,/api/tekcitpay/**
+            - id: payment-swagger
+              uri: http://payment:8081
+              predicates:
+                - Path=/api/payment/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: booking
+              uri: http://booking:8082
+              predicates:
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**
+            - id: booking-swagger
+              uri: http://booking:8082
+              predicates:
+                - Path=/api/booking/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: festival
+              uri: http://festival:8083
+              predicates:
+                - Path=/api/festival/**
+            - id: festival-swagger
+              uri: http://festival:8083
+              predicates:
+                - Path=/api/festival/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+springdoc:
+  swagger-ui:
+    urls:
+      - { name: User,     url: /api/user/v3/api-docs }
+      - { name: Payment,  url: /api/payment/v3/api-docs }
+      - { name: Booking,  url: /api/booking/v3/api-docs }
+      - { name: Festival, url: /api/festival/v3/api-docs }
+
+
+jwt:
+  private-pem-path: ${JWT_PRIVATE_PEM_PATH:file:/etc/keys/private.pem}
+  public-pem-path:  ${JWT_PUBLIC_PEM_PATH:file:/etc/keys/public.pem}
+

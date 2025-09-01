@@ -8,7 +8,6 @@ spring:
     gateway:
       server:
         webflux:
-          # 각 MSA 서비스 라우팅을 위한 설정. uri 가 어떻게 이루어져있는지 파악되지 않아서 predicates ** 처리
           routes:
             - id: user
               uri: http://localhost:8080
