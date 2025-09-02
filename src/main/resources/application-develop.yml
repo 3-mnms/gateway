@@ -65,7 +65,7 @@ spring:
             - id: festival
               uri: http://api-festival-service.festival.svc.cluster.local:8080
               predicates:
-                - Path=/api/festival/**
+                - Path=/api/festival/**,/uploads/**
 
             - id: festival-swagger
               uri: http://api-festival-service.festival.svc.cluster.local:8080

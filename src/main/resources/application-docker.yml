@@ -46,7 +46,7 @@ spring:
             - id: festival
               uri: http://festival:8083
               predicates:
-                - Path=/api/festival/**
+                - Path=/api/festival/**,/uploads/**
             - id: festival-swagger
               uri: http://festival:8083
               predicates:

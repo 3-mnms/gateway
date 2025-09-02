@@ -49,7 +49,7 @@ spring:
             - id: festival
               uri: http://localhost:8083
               predicates:
-                - Path=/api/festival/**
+                - Path=/api/festival/**,/uploads/**
             - id: festival-swagger
               uri: http://localhost:8083
               predicates:
