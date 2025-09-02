@@ -1,5 +1,6 @@
 package com.tekcit.gateway.config.gateway.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tekcit.gateway.config.security.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class JwtToHeaderFilter implements GlobalFilter, Ordered {
                     Claims claims = jwtTokenProvider.getAllClaims(jwt);
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                             .header("X-User-Id",  jwtTokenProvider.getSubject(claims))
-                            .header("X-User-Name", jwtTokenProvider.getClaimAsString(claims,"name"))
+                            .header("X-User-Name", jwtTokenProvider.getName(claims))
                             .header("X-User-Role", jwtTokenProvider.getClaimAsString(claims,"role"))
                             .build();
                     return chain.filter(exchange.mutate().request(mutatedRequest).build());

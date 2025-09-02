@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -130,7 +131,9 @@ public class JwtTokenProvider {
     }
 
     public String getName(Claims claims){
-        return claims.get("name", String.class);
+        String raw = claims.get("name", String.class);
+        String name = Base64.getUrlEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+        return name;
     }
 
     // ===== PEM 로더들
