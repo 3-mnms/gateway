@@ -81,8 +81,8 @@ cors:
 management:
   endpoints:
     web:
-      # ★ Prometheus/Health 만 노출 (보안/안정)
-      include:        # Spring Boot 3 표기 (기존 exposure.include 과 동일 효과)
+      exposure:
+        include:
         - health
         - prometheus
   endpoint:

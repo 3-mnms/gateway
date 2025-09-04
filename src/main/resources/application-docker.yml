@@ -2,11 +2,20 @@ server:
   port: 10000
 
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
+      # ★ Gateway 메트릭 활성화
+      metrics:
+        enabled: true
       server:
         webflux:
+          # ★ WebFlux 메트릭 활성화
+          metrics:
+            enabled: true
           routes:
+            # ========== User ==========
             - id: user
               uri: http://user:8080
               predicates:
@@ -19,6 +28,7 @@ spring:
                 - StripPrefix=2
               order: -1
 
+            # ========== Payment ==========
             - id: payment
               uri: http://payment:8081
               predicates:
@@ -26,11 +36,13 @@ spring:
             - id: payment-swagger
               uri: http://payment:8081
               predicates:
-                - Path=/api/payment/v3/api-docs
+                # ★ payments 로 정합성 수정
+                - Path=/api/payments/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
 
+            # ========== Booking ==========
             - id: booking
               uri: http://booking:8082
               predicates:
@@ -43,6 +55,7 @@ spring:
                 - StripPrefix=2
               order: -1
 
+            # ========== Festival ==========
             - id: festival
               uri: http://festival:8083
               predicates:
@@ -59,7 +72,7 @@ springdoc:
   swagger-ui:
     urls:
       - { name: User,     url: /api/user/v3/api-docs }
-      - { name: Payment,  url: /api/payment/v3/api-docs }
+      - { name: Payment,  url: /api/payments/v3/api-docs }
       - { name: Booking,  url: /api/booking/v3/api-docs }
       - { name: Festival, url: /api/festival/v3/api-docs }
 
@@ -70,7 +83,6 @@ cors:
     - http://localhost:5174
     - http://127.0.0.1:5174
 
-
 jwt:
   private-pem-path: ${JWT_PRIVATE_PEM_PATH:file:/etc/keys/private.pem}
   public-pem-path:  ${JWT_PUBLIC_PEM_PATH:file:/etc/keys/public.pem}
@@ -79,12 +91,25 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+          - health
+          - prometheus
+  endpoint:
     health:
       show-details: always
-  endpoint:
+      probes:
+        enabled: true
     gateway:
       access: unrestricted
+  metrics:
+    # ★ 백분위 계산용 히스토그램
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.cloud.gateway.requests: true
+    # (선택) 모든 메트릭에 app 태그 부여
+    tags:
+      application: ${spring.application.name:api-gateway}
 
 logging:
   level:
