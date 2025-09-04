@@ -6,8 +6,15 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      # ★ Gateway 메트릭 활성화
+      metrics:
+        enabled: true
       server:
         webflux:
+          # ★ WebFlux 메트릭 활성화
+          metrics:
+            enabled: true
+          # 기존 라우팅 유지(로컬 실행용 localhost 대상)
           routes:
             - id: user
               uri: http://localhost:8080
@@ -36,7 +43,8 @@ spring:
             - id: booking
               uri: http://localhost:8082
               predicates:
-                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/capcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
+                # ★ capcha → captcha 로 오탈자 수정
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
 
             - id: booking-swagger
               uri: http://localhost:8082
@@ -57,10 +65,10 @@ spring:
               filters:
                 - StripPrefix=2
               order: -1
+
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
-
 
 # cors url 설정
 cors:
@@ -70,17 +78,26 @@ cors:
     - http://localhost:5174
     - http://127.0.0.1:5174
 
-
 management:
   endpoints:
     web:
-      exposure:
-        include: '*'
+      # ★ Prometheus/Health 만 노출 (보안/안정)
+      include:        # Spring Boot 3 표기 (기존 exposure.include 과 동일 효과)
+        - health
+        - prometheus
+  endpoint:
     health:
       show-details: always
-  endpoint:
+      probes:
+        enabled: true
     gateway:
       access: unrestricted
+  metrics:
+    # ★ 히스토그램 활성화(백분위 계산)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.cloud.gateway.requests: true
 
 logging:
   level:
@@ -95,8 +112,9 @@ springdoc:
       - name: User
         url: /api/user/v3/api-docs
 
+      # ★ payments 로 경로 정합성 수정
       - name: Payment
-        url: /api/payment/v3/api-docs
+        url: /api/payments/v3/api-docs
 
       - name: Booking
         url: /api/booking/v3/api-docs
