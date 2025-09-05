@@ -9,6 +9,8 @@ spring:
       # ★ Gateway 메트릭 활성화
       metrics:
         enabled: true
+      observation:
+        enabled: true
       server:
         webflux:
           # ★ WebFlux 메트릭 활성화
