@@ -57,7 +57,10 @@ dependencies {
     // ===== Test =====
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'\
+
+	// ===== Micrometer Observation for Spring Cloud Gateway =====
+	implementation 'org.springframework.cloud:spring-cloud-gateway-server-micrometer'
 }
 
 dependencyManagement {
