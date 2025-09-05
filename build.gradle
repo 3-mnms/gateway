@@ -8,9 +8,7 @@ group = 'com.tekcit'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 repositories {
@@ -22,45 +20,41 @@ ext {
 }
 
 dependencies {
-    // ===== Core =====
+    // Core
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // ===== Spring Cloud Gateway (WebFlux 기반) =====
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // ★ Spring Cloud Gateway (starter 하나면 충분; WebFlux 포함됨)
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
-    // ===== Kubernetes Discovery =====
+    // Kubernetes (필요시)
     implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
 
-    // ===== JWT / Security =====
+    // JWT / Security
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation 'org.springframework.security:spring-security-oauth2-resource-server'
 
-    // ===== Lombok =====
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // ===== JSON =====
+    // JSON
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'org.springframework.boot:spring-boot-starter-json'
 
-    // ===== Swagger =====
+    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9'
 
-    // ===== Metrics / Prometheus =====
+    // ★ Prometheus 레지스트리
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    // ===== Test =====
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'\
-
-	// ===== Micrometer Observation for Spring Cloud Gateway =====
-	implementation 'org.springframework.cloud:spring-cloud-gateway-server-micrometer'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 dependencyManagement {
@@ -69,6 +63,4 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+tasks.named('test') { useJUnitPlatform() }

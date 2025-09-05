@@ -16,59 +16,61 @@ spring:
           # ★ WebFlux 메트릭 활성화
           metrics:
             enabled: true
-          routes:
-            # ========== User ==========
-            - id: user
-              uri: http://user:8080
-              predicates:
-                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
-            - id: user-swagger
-              uri: http://user:8080
-              predicates:
-                - Path=/api/user/v3/api-docs
-              filters:
-                - StripPrefix=2
-              order: -1
 
-            # ========== Payment ==========
-            - id: payment
-              uri: http://payment:8081
-              predicates:
-                - Path=/api/payments/**,/api/tekcitpay/**
-            - id: payment-swagger
-              uri: http://payment:8081
-              predicates:
-                # ★ payments 로 정합성 수정
-                - Path=/api/payments/v3/api-docs
-              filters:
-                - StripPrefix=2
-              order: -1
+      # ★★★ 여기만 이동 (gateway 직속)
+      routes:
+        # ========== User ==========
+        - id: user
+          uri: http://user:8080
+          predicates:
+            - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
+        - id: user-swagger
+          uri: http://user:8080
+          predicates:
+            - Path=/api/user/v3/api-docs
+          filters:
+            - StripPrefix=2
+          order: -1
 
-            # ========== Booking ==========
-            - id: booking
-              uri: http://booking:8082
-              predicates:
-                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
-            - id: booking-swagger
-              uri: http://booking:8082
-              predicates:
-                - Path=/api/booking/v3/api-docs
-              filters:
-                - StripPrefix=2
-              order: -1
+        # ========== Payment ==========
+        - id: payment
+          uri: http://payment:8081
+          predicates:
+            - Path=/api/payments/**,/api/tekcitpay/**
+        - id: payment-swagger
+          uri: http://payment:8081
+          predicates:
+            # ★ payments 로 정합성 수정
+            - Path=/api/payments/v3/api-docs
+          filters:
+            - StripPrefix=2
+          order: -1
 
-            # ========== Festival ==========
-            - id: festival
-              uri: http://festival:8083
-              predicates:
-                - Path=/api/festival/**,/uploads/**
-            - id: festival-swagger
-              uri: http://festival:8083
-              predicates:
-                - Path=/api/festival/v3/api-docs
-              filters:
-                - StripPrefix=2
-              order: -1
+        # ========== Booking ==========
+        - id: booking
+          uri: http://booking:8082
+          predicates:
+            - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
+        - id: booking-swagger
+          uri: http://booking:8082
+          predicates:
+            - Path=/api/booking/v3/api-docs
+          filters:
+            - StripPrefix=2
+          order: -1
+
+        # ========== Festival ==========
+        - id: festival
+          uri: http://festival:8083
+          predicates:
+            - Path=/api/festival/**,/uploads/**
+        - id: festival-swagger
+          uri: http://festival:8083
+          predicates:
+            - Path=/api/festival/v3/api-docs
+          filters:
+            - StripPrefix=2
+          order: -1
 
 springdoc:
   swagger-ui:
