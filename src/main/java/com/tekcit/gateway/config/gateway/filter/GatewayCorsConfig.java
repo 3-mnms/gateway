@@ -25,22 +25,47 @@ public class GatewayCorsConfig {
     private final CorsProperties corsProperties;
 
 
-    @Bean
-    public CorsWebFilter corsWebFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        for(String url : corsProperties.getUrl()){
-            config.addAllowedOrigin(url);
+//    @Bean
+//    public CorsWebFilter corsWebFilter() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        for(String url : corsProperties.getUrl()){
+//            config.addAllowedOrigin(url);
+//        }
+//        config.addAllowedMethod("*");
+//        config.addAllowedHeader("*");
+//        config.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return new CorsWebFilter(source);
+//    }
+//
+
+        @Bean
+        public WebFilter corsFilter() {
+            return (exchange, chain) -> {
+                String path = exchange.getRequest().getURI().getPath();
+                if (path.startsWith("/ws")) {
+                    // WebSocket 경로는 CORS 필터 건너뛰기 (서버로 그대로 전달)
+                    return chain.filter(exchange);
+                }
+
+                CorsConfiguration config = new CorsConfiguration();
+                for (String url : corsProperties.getUrl()) {
+                    config.addAllowedOrigin(url);
+                }
+                config.addAllowedMethod("*");
+                config.addAllowedHeader("*");
+                config.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", config);
+
+                return new CorsWebFilter(source).filter(exchange, chain);
+            };
         }
-        config.addAllowedMethod("*");
-        config.addAllowedHeader("*");
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new CorsWebFilter(source);
-    }
-
 
 
 }
