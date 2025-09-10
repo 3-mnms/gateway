@@ -53,7 +53,6 @@ spring:
               uri: ws://booking:8082
               predicates:
                 - Path=/ws/**
-                -
             - id: booking-swagger
               uri: http://booking:8082
               predicates:

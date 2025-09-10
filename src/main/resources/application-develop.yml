@@ -25,7 +25,6 @@ spring:
               uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
                 - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
-
             - id: user-swagger
               uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
@@ -53,12 +52,10 @@ spring:
               uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
                 - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
-
             - id: booking_ws_route
               uri: ws://api-booking-service.booking.svc.cluster.local:8080
               predicates:
                 - Path=/ws/**
-
             - id: booking-swagger
               uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:
