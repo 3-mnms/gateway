@@ -38,7 +38,6 @@ spring:
             - id: payment-swagger
               uri: http://payment:8081
               predicates:
-                # ★ payments 로 정합성 수정
                 - Path=/api/payments/v3/api-docs
               filters:
                 - StripPrefix=2

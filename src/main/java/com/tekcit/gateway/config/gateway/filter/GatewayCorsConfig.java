@@ -51,11 +51,13 @@ public class GatewayCorsConfig {
                 String origin = request.getHeaders().getOrigin();
                 CorsConfiguration corsConfig = new CorsConfiguration();
 
-                if (origin != null && corsProperties.getUrl().contains(origin)) {
-                    corsConfig.addAllowedOrigin(origin);
-                    corsConfig.setAllowCredentials(true);
-                    corsConfig.addAllowedMethod("*");
-                    corsConfig.addAllowedHeader("*");
+                if (origin != null && corsProperties.getUrl().contains(origin) &&
+                        !exchange.getResponse().getHeaders().containsKey(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)) {
+
+                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "*");
+                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
                 }
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
