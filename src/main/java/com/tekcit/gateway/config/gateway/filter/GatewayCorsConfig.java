@@ -41,30 +41,6 @@ public class GatewayCorsConfig {
         return new CorsWebFilter(source);
     }
 
-    @Bean
-    public WebFilter webSocketCorsFilter() {
-        return (ServerWebExchange exchange, WebFilterChain chain) -> {
-            ServerHttpRequest request = exchange.getRequest();
-            String upgradeHeader = request.getHeaders().getFirst(HttpHeaders.UPGRADE);
 
-            if ("websocket".equalsIgnoreCase(upgradeHeader)) {
-                String origin = request.getHeaders().getOrigin();
-                CorsConfiguration corsConfig = new CorsConfiguration();
 
-                if (origin != null && corsProperties.getUrl().contains(origin) &&
-                        !exchange.getResponse().getHeaders().containsKey(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)) {
-
-                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
-                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "*");
-                    exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
-                }
-
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", corsConfig);
-            }
-
-            return chain.filter(exchange);
-        };
-    }
 }
