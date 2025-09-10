@@ -43,7 +43,7 @@ spring:
             - id: payment-swagger
               uri: http://api-payment-service.payment.svc.cluster.local:8080
               predicates:
-                - Path=/api/payment/v3/api-docs
+                - Path=/api/payments/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
@@ -122,7 +122,7 @@ springdoc:
         url: /api/user/v3/api-docs
 
       - name: Payment
-        url: /api/payment/v3/api-docs
+        url: /api/payments/v3/api-docs
 
       - name: Booking
         url: /api/booking/v3/api-docs
