@@ -54,6 +54,11 @@ spring:
               predicates:
                 - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
 
+            - id: booking_ws_route
+              uri: ws://api-booking-service.booking.svc.cluster.local:8080
+              predicates:
+                - Path=/ws/**
+
             - id: booking-swagger
               uri: http://api-booking-service.booking.svc.cluster.local:8080
               predicates:

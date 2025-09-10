@@ -45,6 +45,10 @@ spring:
               predicates:
                 # ★ capcha → captcha 로 오탈자 수정
                 - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
+            - id: booking_ws_route
+              uri: ws://localhost:8082
+              predicates:
+                - Path=/ws/**
 
             - id: booking-swagger
               uri: http://localhost:8082

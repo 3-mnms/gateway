@@ -47,6 +47,11 @@ spring:
               uri: http://booking:8082
               predicates:
                 - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
+            - id: booking_ws_route
+              uri: ws://booking:8082
+              predicates:
+                - Path=/ws/**
+                -
             - id: booking-swagger
               uri: http://booking:8082
               predicates:
