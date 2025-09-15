@@ -33,9 +33,11 @@ public class JwtToHeaderFilter implements GlobalFilter, Ordered {
                     String jwt = auth.getToken().getTokenValue();
                     Claims claims = jwtTokenProvider.getAllClaims(jwt);
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                            .header("X-User-Id",  jwtTokenProvider.getSubject(claims))
-                            .header("X-User-Name", jwtTokenProvider.getName(claims))
-                            .header("X-User-Role", jwtTokenProvider.getClaimAsString(claims,"role"))
+                            .headers(h ->{
+                                h.set("X-User-Id", jwtTokenProvider.getSubject(claims));
+                                h.set("X-User-Name", jwtTokenProvider.getName(claims));
+                                h.set("X-User-Role", jwtTokenProvider.getClaimAsString(claims, "role"));
+                            })
                             .build();
                     return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 })

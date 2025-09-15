@@ -1,13 +1,12 @@
 package com.tekcit.gateway.config.security.repository;
 
 import com.tekcit.gateway.config.security.jwt.JwtTokenProvider;
+import com.tekcit.gateway.exception.ApiErrorUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -51,31 +49,14 @@ public class JwtSecurityContextRepository implements ServerSecurityContextReposi
             JwtAuthenticationToken auth = new JwtAuthenticationToken(jwtTokenProvider.convertToSpringJwt(token), authorities);
             return Mono.just(new SecurityContextImpl(auth));
         } catch (ExpiredJwtException e) {
-            return writeJson(exchange, HttpStatus.UNAUTHORIZED,
-                    false, "AUTHENTICATION_ERROR", "액세스 토큰이 만료되었습니다.")
+            return ApiErrorUtils.unauthorized(exchange, "AUTH_ACCESS_TOKEN_EXPIRED", "액세스 토큰이 만료되었습니다.")
                     .then(Mono.empty());
-
         } catch (JwtException e) {
-            return writeJson(exchange, HttpStatus.UNAUTHORIZED,
-                    false, "AUTHENTICATION_ERROR", "유효하지 않은 액세스 토큰입니다.")
+            return ApiErrorUtils.unauthorized(exchange, "AUTH_INVALID_TOKEN", "유효하지 않은 액세스 토큰입니다.")
                     .then(Mono.empty());
-
         } catch (Exception e) {
-            return writeJson(exchange, HttpStatus.UNAUTHORIZED,
-                    false, "AUTHENTICATION_ERROR", "토큰 처리 중 오류가 발생했습니다.")
+            return ApiErrorUtils.unauthorized(exchange, "AUTHENTICATION_ERROR", "토큰 처리 중 오류가 발생했습니다.")
                     .then(Mono.empty());
         }
-    }
-
-
-    private Mono<Void> writeJson(ServerWebExchange exchange, HttpStatus status, boolean success, String code, String message) {
-        var res = exchange.getResponse();
-        if (res.isCommitted())
-            return Mono.empty();
-        res.setStatusCode(status);
-        res.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        String body = String.format("{\"success\":%s,\"code\":\"%s\",\"message\":\"%s\"}", success, code, message);
-        var buf = res.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
-        return res.writeWith(Mono.just(buf));
     }
 }
