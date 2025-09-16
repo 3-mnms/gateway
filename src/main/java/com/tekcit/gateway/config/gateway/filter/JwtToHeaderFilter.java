@@ -23,6 +23,35 @@ public class JwtToHeaderFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        String upgradeHeader = exchange.getRequest().getHeaders().getFirst("Upgrade");
+        System.out.println(upgradeHeader);
+
+
+        if (upgradeHeader != null && upgradeHeader.equalsIgnoreCase("websocket")) {
+            // WebSocket handshake 요청이면 SecurityContext와 상관없이 JWT를 직접 읽어 헤더 추가
+            String token = exchange.getRequest().getQueryParams().getFirst("token");
+            exchange.getRequest().getHeaders().forEach((key, values) -> {
+                System.out.println(key + " : " + values);
+            });
+            if (token != null && token.startsWith("Bearer ")) {
+                String jwt = token.substring(7);
+                Claims claims = jwtTokenProvider.getAllClaims(jwt);
+                System.out.println(" ============= WebSocket Authorization ================");
+                System.out.println("X-User-Id" +  jwtTokenProvider.getSubject(claims));
+                System.out.println("X-User-Name" +  jwtTokenProvider.getName(claims));
+                System.out.println("X-User-Role" +  jwtTokenProvider.getClaimAsString(claims, "role"));
+                ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                        .headers(h -> {
+                            h.set("X-User-Id", jwtTokenProvider.getSubject(claims));
+                            h.set("X-User-Name", jwtTokenProvider.getName(claims));
+                            h.set("X-User-Role", jwtTokenProvider.getClaimAsString(claims, "role"));
+                        })
+                        .build();
+                return chain.filter(exchange.mutate().request(mutatedRequest).build());
+            }
+        }
+
         return ReactiveSecurityContextHolder.getContext()
                 .doOnNext(ctx -> System.out.println("SecurityContext 있음: " + ctx))
                 .map(securityContext -> securityContext.getAuthentication())
@@ -32,6 +61,17 @@ public class JwtToHeaderFilter implements GlobalFilter, Ordered {
                 .flatMap(auth -> {
                     String jwt = auth.getToken().getTokenValue();
                     Claims claims = jwtTokenProvider.getAllClaims(jwt);
+
+                    // 요청 주소 확인
+                    ServerHttpRequest request = exchange.getRequest();
+                    System.out.println("요청 URI: " + request.getURI());
+                    System.out.println("요청 Path: " + request.getPath());
+                    System.out.println("요청 Method: " + request.getMethod());
+
+                    System.out.println("X-User-Id " + jwtTokenProvider.getSubject(claims));
+                    System.out.println("X-User-Name " + jwtTokenProvider.getName(claims));
+                    System.out.println("X-User-Role " + jwtTokenProvider.getClaimAsString(claims, "role"));
+
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                             .headers(h ->{
                                 h.set("X-User-Id", jwtTokenProvider.getSubject(claims));
