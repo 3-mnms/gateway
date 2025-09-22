@@ -1,7 +1,10 @@
 package com.tekcit.gateway.config.security.repository;
 
 import com.tekcit.gateway.config.security.jwt.JwtTokenProvider;
+import com.tekcit.gateway.exception.ApiErrorUtils;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -45,8 +48,15 @@ public class JwtSecurityContextRepository implements ServerSecurityContextReposi
 
             JwtAuthenticationToken auth = new JwtAuthenticationToken(jwtTokenProvider.convertToSpringJwt(token), authorities);
             return Mono.just(new SecurityContextImpl(auth));
+        } catch (ExpiredJwtException e) {
+            return ApiErrorUtils.unauthorized(exchange, "AUTH_ACCESS_TOKEN_EXPIRED", "액세스 토큰이 만료되었습니다.")
+                    .then(Mono.empty());
+        } catch (JwtException e) {
+            return ApiErrorUtils.unauthorized(exchange, "AUTH_INVALID_TOKEN", "유효하지 않은 액세스 토큰입니다.")
+                    .then(Mono.empty());
         } catch (Exception e) {
-            return Mono.empty();
+            return ApiErrorUtils.unauthorized(exchange, "AUTHENTICATION_ERROR", "토큰 처리 중 오류가 발생했습니다.")
+                    .then(Mono.empty());
         }
     }
 }

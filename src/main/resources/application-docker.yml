@@ -1,112 +1,120 @@
 server:
-  port: 8080
+  port: 10000
 
 spring:
   application:
     name: api-gateway
   cloud:
-    # Kubernetes 자동 Routing 설정 및 검색 범위 namespace 설정
-    kubernetes:
-      discovery:
-        enabled: true
-        namespaces:
-          - booking
-          - festival
-          - payment
-          - user
-        # 검색 조건 : service 가 이 라벨을 포함할 경우
-        service-labels:
-          expose-via-spring-gateway: "true"
     gateway:
+      # ★ Gateway 메트릭 활성화
+      metrics:
+        enabled: true
+      observation:
+        enabled: true
       server:
         webflux:
+          # ★ WebFlux 메트릭 활성화
+          metrics:
+            enabled: true
           routes:
+            # ========== User ==========
             - id: user
-              uri: http://api-user-service.user.svc.cluster.local:8080
+              uri: http://user:8080
               predicates:
                 - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
-
             - id: user-swagger
-              uri: http://api-user-service.user.svc.cluster.local:8080
+              uri: http://user:8080
               predicates:
                 - Path=/api/user/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
 
-
+            # ========== Payment ==========
             - id: payment
-              uri: http://api-payment-service.payment.svc.cluster.local:8080
+              uri: http://payment:8081
               predicates:
                 - Path=/api/payments/**,/api/tekcitpay/**
-
             - id: payment-swagger
-              uri: http://api-payment-service.payment.svc.cluster.local:8080
+              uri: http://payment:8081
               predicates:
                 - Path=/api/payments/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
 
-
+            # ========== Booking ==========
             - id: booking
-              uri: http://api-booking-service.booking.svc.cluster.local:8080
+              uri: http://booking:8082
               predicates:
                 - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
             - id: booking_ws_route
-              uri: ws://api-booking-service.booking.svc.cluster.local:8080
+              uri: ws://booking:8082
               predicates:
                 - Path=/ws/**
             - id: booking-swagger
-              uri: http://api-booking-service.booking.svc.cluster.local:8080
+              uri: http://booking:8082
               predicates:
                 - Path=/api/booking/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
 
+            # ========== Festival ==========
             - id: festival
-              uri: http://api-festival-service.festival.svc.cluster.local:8080
+              uri: http://festival:8083
               predicates:
                 - Path=/api/festival/**,/uploads/**
-
             - id: festival-swagger
-              uri: http://api-festival-service.festival.svc.cluster.local:8080
+              uri: http://festival:8083
               predicates:
                 - Path=/api/festival/v3/api-docs
               filters:
                 - StripPrefix=2
               order: -1
 
+springdoc:
+  swagger-ui:
+    urls:
+      - { name: User,     url: /api/user/v3/api-docs }
+      - { name: Payment,  url: /api/payments/v3/api-docs }
+      - { name: Booking,  url: /api/booking/v3/api-docs }
+      - { name: Festival, url: /api/festival/v3/api-docs }
 
-# JWT key 세팅
-jwt:
-  private-pem-path: classpath:keys/private.pem
-  public-pem-path: classpath:keys/public.pem
-
-
-# cors url 설정
 cors:
   url:
     - http://localhost:5173
     - http://127.0.0.1:5173
     - http://localhost:5174
     - http://127.0.0.1:5174
-    - https://www.rookies-tekcit.com
-    - http://www.rookies-tekcit.com
 
+jwt:
+  private-pem-path: ${JWT_PRIVATE_PEM_PATH:file:/etc/keys/private.pem}
+  public-pem-path:  ${JWT_PUBLIC_PEM_PATH:file:/etc/keys/public.pem}
 
-# actuator 노출 범위, 조건
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+          - health
+          - prometheus
+  endpoint:
     health:
       show-details: always
-  endpoint:
+      probes:
+        enabled: true
     gateway:
       access: unrestricted
+  metrics:
+    # ★ 백분위 계산용 히스토그램
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.cloud.gateway.requests: true
+    # (선택) 모든 메트릭에 app 태그 부여
+    tags:
+      application: ${spring.application.name:api-gateway}
 
 logging:
   level:
@@ -114,18 +122,3 @@ logging:
     org.springframework.cloud.gateway.discovery: DEBUG
     org.springframework.cloud.kubernetes.discovery: DEBUG
     reactor.netty.http.client.HttpClient: DEBUG
-
-springdoc:
-  swagger-ui:
-    urls:
-      - name: User
-        url: /api/user/v3/api-docs
-
-      - name: Payment
-        url: /api/payments/v3/api-docs
-
-      - name: Booking
-        url: /api/booking/v3/api-docs
-
-      - name: Festival
-        url: /api/festival/v3/api-docs

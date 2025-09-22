@@ -5,36 +5,103 @@ spring:
   application:
     name: api-gateway
   cloud:
-    kubernetes:
-      discovery:
-        enabled: true
-        namespaces:
-          - booking
-          - festival
-          - payment
-          - user
     gateway:
-      routes:
-        - id: local-service
-          uri: http://localhost:10003
-          predicates:
-            - Path=/api/**
+      # ★ Gateway 메트릭 활성화
+      metrics:
+        enabled: true
+      server:
+        webflux:
+          # ★ WebFlux 메트릭 활성화
+          metrics:
+            enabled: true
+          # 기존 라우팅 유지(로컬 실행용 localhost 대상)
+          routes:
+            - id: user
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
+            - id: user-swagger
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/user/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: payment
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/payments/**,/api/tekcitpay/**
+            - id: payment-swagger
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/payments/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: booking
+              uri: http://localhost:8082
+              predicates:
+                # ★ capcha → captcha 로 오탈자 수정
+                - Path=/api/booking/**,/api/qr/**,/api/host/**,/api/captcha/**,/api/transfer/**,/api/ticket/**,/api/statistics/**,/ws/**
+            - id: booking_ws_route
+              uri: ws://localhost:8082
+              predicates:
+                - Path=/ws/**
+
+            - id: booking-swagger
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/booking/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
+            - id: festival
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/festival/**,/uploads/**
+            - id: festival-swagger
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/festival/v3/api-docs
+              filters:
+                - StripPrefix=2
+              order: -1
+
 jwt:
   private-pem-path: classpath:keys/private.pem
   public-pem-path: classpath:keys/public.pem
 
-
+# cors url 설정
+cors:
+  url:
+    - http://localhost:5173
+    - http://127.0.0.1:5173
+    - http://localhost:5174
+    - http://127.0.0.1:5174
 
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+        - health
+        - prometheus
+  endpoint:
     health:
       show-details: always
-  endpoint:
+      probes:
+        enabled: true
     gateway:
       access: unrestricted
+  metrics:
+    # ★ 히스토그램 활성화(백분위 계산)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.cloud.gateway.requests: true
 
 logging:
   level:
@@ -42,3 +109,19 @@ logging:
     org.springframework.cloud.gateway.discovery: DEBUG
     org.springframework.cloud.kubernetes.discovery: DEBUG
     reactor.netty.http.client.HttpClient: DEBUG
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User
+        url: /api/user/v3/api-docs
+
+      # ★ payments 로 경로 정합성 수정
+      - name: Payment
+        url: /api/payments/v3/api-docs
+
+      - name: Booking
+        url: /api/booking/v3/api-docs
+
+      - name: Festival
+        url: /api/festival/v3/api-docs

@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -82,16 +83,19 @@ public class JwtTokenProvider {
 
         Map<String, Object> claimsMap = new HashMap<>(claims);
 
-        Integer expInt = (Integer) claims.get("exp");
-        Integer iatInt = (Integer) claims.get("iat");
+        Object expObj = claims.get("exp");
+        Object iatObj = claims.get("iat");
 
-        Instant expiresAt = Instant.ofEpochSecond(expInt.longValue());
-        Instant issuedAt = Instant.ofEpochSecond(iatInt.longValue());
+        Long exp = expObj instanceof Number ? ((Number) expObj).longValue() : null;
+        Long iat = iatObj instanceof Number ? ((Number) iatObj).longValue() : null;
+
+        Instant expiresAt = Instant.ofEpochSecond(exp);
+        Instant issuedAt = Instant.ofEpochSecond(iat);
 
         return new Jwt(token, issuedAt, expiresAt, headers, claimsMap);
     }
 
-    //  Claim 추출
+    // 토큰 추출
     public Claims getAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(publicKey)
@@ -100,6 +104,13 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
+    public String getSubject(String token){
+        return getAllClaims(token).getSubject();
+    }
+    public String getSubject(Claims claims){
+        return claims.getSubject();
+    }
+
     public String getClaimAsString(Claims claims, String claimName){
         return claims.get(claimName).toString();
     }
@@ -120,7 +131,9 @@ public class JwtTokenProvider {
     }
 
     public String getName(Claims claims){
-        return claims.get("name", String.class);
+        String raw = claims.get("name", String.class);
+        String name = Base64.getUrlEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+        return name;
     }
 
     // ===== PEM 로더들

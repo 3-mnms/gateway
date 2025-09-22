@@ -25,7 +25,6 @@ spring:
               uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
                 - Path=/api/user/**,/api/addresses/**,/api/admin/**,/api/users/**,/api/mail/**,/api/auth/**,/api/myPage/**
-
             - id: user-swagger
               uri: http://api-user-service.user.svc.cluster.local:8080
               predicates:
@@ -92,8 +91,6 @@ cors:
     - http://127.0.0.1:5173
     - http://localhost:5174
     - http://127.0.0.1:5174
-    - https://www.rookies-tekcit.com
-    - http://www.rookies-tekcit.com
 
 
 # actuator 노출 범위, 조건
